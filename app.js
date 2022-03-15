@@ -1,24 +1,26 @@
 const express = require('express');
-const { response } = require('express');
+const ejs = require('ejs');
 const path = require('path');
 
 const app = express();
 
-/*const myLogger = (req, res, next) => {
-  console.log('middleware log 1');
-  next();
-};
-
-const myLogger2 = (req, res, next) => {
-  console.log('middleware log 2');
-  next();
-};*/
+//TEMPLATE ENGİNE
+app.set('view engine', 'ejs');
 
 //MIDDLEWARES
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'temp/index.html'));
+  /*res.sendFile(path.resolve(__dirname, 'views/index.ejs'));*/
+  res.render('index');
+});
+app.get('/about', (req, res) => {
+  /*res.sendFile(path.resolve(__dirname, 'views/index.ejs'));*/
+  res.render('about');
+});
+app.get('/add', (req, res) => {
+  /*res.sendFile(path.resolve(__dirname, 'views/index.ejs'));*/
+  res.render('add');
 });
 
 const port = 3000;
