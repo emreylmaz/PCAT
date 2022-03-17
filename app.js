@@ -9,6 +9,8 @@ app.set('view engine', 'ejs');
 
 //MIDDLEWARES
 app.use(express.static('public'));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.get('/', (req, res) => {
   /*res.sendFile(path.resolve(__dirname, 'views/index.ejs'));*/
@@ -21,6 +23,10 @@ app.get('/about', (req, res) => {
 app.get('/add', (req, res) => {
   /*res.sendFile(path.resolve(__dirname, 'views/index.ejs'));*/
   res.render('add');
+});
+app.post('/photos', (req, res) => {
+  console.log(req.body);
+  res.redirect('/');
 });
 
 const port = 3000;
