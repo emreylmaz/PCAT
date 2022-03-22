@@ -17,14 +17,14 @@ exports.getPhoto = async (req, res) => {
 };
 
 exports.createPhoto = async (req, res) => {
-  const uploadDir = '../public/uploads';
+  const uploadDir = __dirname + '/../public/uploads';
 
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
   }
 
   let uploadImage = req.files.image;
-  let uploadPath = uploadDir + '/' + uploadImage.name;
+  let uploadPath = __dirname + '/../public/uploads/' + uploadImage.name;
 
   uploadImage.mv(uploadPath, async (err) => {
     if (err) {
