@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const fileUpload = require('express-fileupload');
 const express = require('express');
+const photoController = require('./controllers/photoController');
+const pageController = require('./controllers/pageController');
 
 const app = express();
 
@@ -29,85 +31,15 @@ app.use(
 );
 
 //Routes
-app.get('/', async (req, res) => {
-  const photos = await Photo.find({});
-  res.render('index', {
-    photos,
-  });
-});
-app.get('/photos/:id', async (req, res) => {
-  const photo = await Photo.findById(req.params.id);
-  res.render('photo', {
-    photo,
-  });
-});
-app.get('/about', (req, res) => {
-  res.render('about');
-});
-app.get('/add', (req, res) => {
-  /*res.sendFile(path.resolve(__dirname, 'views/index.ejs'));*/
-  res.render('add');
-});
-app.post('/photos', async (req, res) => {
-  const uploadDir = 'public/uploads';
+app.get('/', photoController.getAllPhotos);
+app.get('/photos/:id', photoController.getPhoto);
+app.post('/photos', photoController.createPhoto);
+app.put('/photos/:id', photoController.updatePhoto);
+app.delete('/photos/:id', photoController.deletePhoto);
 
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
-  }
-
-  let uploadImage = req.files.image;
-  let uploadPath = uploadDir + '/' + uploadImage.name;
-
-  uploadImage.mv(uploadPath, async (err) => {
-    if (err) {
-      console.log(err);
-      res.redirect('/add');
-    } else {
-      const photo = new Photo({
-        title: req.body.title,
-        description: req.body.description,
-        image: '/uploads/' + uploadImage.name,
-      });
-      await photo.save();
-      res.redirect('/');
-    }
-  });
-});
-app.get('/photos/edit/:id', async (req, res) => {
-  const photo = await Photo.findOne({ _id: req.params.id });
-  res.render('edit', {
-    photo,
-  });
-});
-
-app.put('/photos/:id', (req, res) => {
-  Photo.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true },
-    (err, photo) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.redirect(`/photos/${req.params.id}`);
-      }
-    }
-  );
-});
-app.delete('/photos/:id', async (req, res) => {
-  const photo = await Photo.findOne({ _id: req.params.id });
-  let deletedImage = __dirname + '/public' + photo.image;
-  /*fs.existsSync(deletedImage, (exists) => {
-    if (exists) {
-      console.log('File exists.');
-    } else {
-      fs.unlinkSync(deletedImage);
-    }
-  });*/
-  fs.unlinkSync(deletedImage);
-  await Photo.findByIdAndRemove(req.params.id);
-  res.redirect('/');
-});
+app.get('/about', pageController.getAboutPage);
+app.get('/add', pageController.getAddPage);
+app.get('/photos/edit/:id', pageController.getEditPage);
 
 const port = 3000;
 app.listen(port, () => {
