@@ -13,7 +13,7 @@ const app = express();
 // Connect DB
 mongoose
   .connect(
-    'mongodb+srv://admin:a20dCcYbBHnYwFJ9@pcat.g5hkf.mongodb.net/pcat-db?retryWrites=true&w=majority',
+    'mongodb://localhost/pcat-test-db',
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
