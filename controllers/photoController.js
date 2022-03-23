@@ -3,10 +3,28 @@ const fs = require('fs');
 const path = require('path');
 
 exports.getAllPhotos = async (req, res) => {
-  const photos = await Photo.find({});
+  const page = req.query.page || 1; // pagination
+  const photosPerPage = 3; //sayfa başına gösterilecek fotoğraf sayısı
+
+  const totalPhotos = await Photo.find().countDocuments(); //tüm fotoğraf sayısını buluyoruz
+
+  const photos = await Photo.find({}) //tüm fotoğrafları ilgili condiotına göre buluyoruz
+    .sort('-dateCreated')
+    .skip((page - 1) * photosPerPage)
+    .limit(photosPerPage);
+
+  res.render('index', {
+    //index.ejs dosyasının içeriğini gönderiyoruz
+    photos: photos,
+    current: page,
+    pages: Math.ceil(totalPhotos / photosPerPage),
+  });
+
+  /* console.log(req.query);
+  const photos = await Photo.find({}).sort('-dateCreated');
   res.render('index', {
     photos,
-  });
+  });*/
 };
 
 exports.getPhoto = async (req, res) => {
